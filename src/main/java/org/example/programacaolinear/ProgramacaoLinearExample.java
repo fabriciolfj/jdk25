@@ -10,6 +10,18 @@ import java.util.Collection;
 public class ProgramacaoLinearExample {
 
     public static void main(String[] args) {
+
+        /**
+         * Problema exemplo
+         * Uma fábrica produz cadeiras e mesas:
+         *
+         * Cada cadeira dá R$ 50 de lucro, cada mesa R$ 80
+         * Cadeira usa 2h de trabalho, mesa usa 3h
+         * Cadeira usa 4m² de madeira, mesa usa 6m²
+         * Disponível: 100h de trabalho e 180m² de madeira
+         *
+         * Objetivo: maximizar o lucro
+         */
         // Função objetivo: maximizar 50x + 80y
         LinearObjectiveFunction funcaoObjetivo = new LinearObjectiveFunction(
                 new double[]{50, 80},
