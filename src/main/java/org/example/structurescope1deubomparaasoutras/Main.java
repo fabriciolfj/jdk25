@@ -28,7 +28,7 @@ public class Main {
             scope.fork(() -> fetchTester(2));
             scope.fork(() -> fetchTester(3));
 
-            return new TestingTeam((String) scope.join());
+            return new TestingTeam((String) scope.join()); //ja traz o resultado
         }
     }
 
