@@ -1,7 +1,16 @@
 package org.example.parallelstrategy;
 
+import reactor.core.publisher.Mono;
+
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicReference;
+
+import static java.util.concurrent.CompletableFuture.runAsync;
+import static java.util.concurrent.CompletableFuture.supplyAsync;
 
 public class CreditCalculateMain {
 
@@ -14,35 +23,56 @@ public class CreditCalculateMain {
         return calculateCredits(assets, liabilities);
     }
 
+    Credit calculeCreditWithUnboundedThreads(Long personId) throws InterruptedException, ExecutionException {
 
-    Credit calculeCreditWithUnboundedThreads(Long personId) throws InterruptedException {
-        var person = getPerson(personId);
-        var assetsRef = new AtomicReference<List<Asset>>();
-        var t1 = new Thread(() -> {
-            var assets = getAssets(person);
-            assetsRef.set(assets);
-        });
+        try (ExecutorService executors = Executors.newVirtualThreadPerTaskExecutor()) {
+            var person = getPerson(personId);
+            var assets = executors.submit(() -> getAssets(person));
+            var liabilities = executors.submit(() -> getLiabilities(person));
 
-        var liabilitiesRef = new AtomicReference<List<Liability>>();
-        Thread t2 = new Thread(() -> {
-            var liabilities = getLiabilities(person);
-            liabilitiesRef.set(liabilities);
-        });
+            executors.submit(this::importantWork);
 
-        var t3 = new Thread(this::importantWork);
-
-        t1.start();
-        t2.start();
-        t3.start();
-
-        t1.join();
-        t2.join();
-
-        var credit = calculateCredits(assetsRef.get(), liabilitiesRef.get());
-        t3.join();
-
-        return credit;
+            return calculateCredits(assets.get(), liabilities.get());
+        }
     }
+
+    /*Mono<Credit>  calculeCreditWithUnboundedThreads(Long personId) throws InterruptedException, ExecutionException {
+        Mono<Void> importantWorkMono = Mono.fromRunnable(this::importantWork);
+        Mono<Person> personMono = Mono.fromSupplier(() -> getPerson(personId));
+        Mono<List<Asset>> assetsMono = personMono.map(this::getAssets);
+        Mono<List<Liability>> liabilitesMono = personMono.map(this::getLiabilities);
+
+        return importantWorkMono.then(
+                Mono.zip(assetsMono, liabilitesMono)
+                        .map(tuple -> {
+                            List<Asset> assets = tuple.getT1();
+                            List<Liability> liabilities = tuple.getT2();
+                            return calculateCredits(assets, liabilities);
+                        })
+        );
+    }*/
+
+    /*Credit calculeCreditWithUnboundedThreads(Long personId) throws InterruptedException, ExecutionException {
+        return runAsync(() -> importantWork())
+                .thenCompose(aVoid -> supplyAsync(() -> getPerson(personId)))
+                .thenCombineAsync(supplyAsync(() -> getAssets(getPerson(personId))),
+                        (person, asserts) -> calculateCredits(asserts, getLiabilities(person)))
+                .get();
+    }*/
+
+    /*Credit calculeCreditWithUnboundedThreads(Long personId) throws InterruptedException, ExecutionException {
+
+        try (ForkJoinPool joinPool = new ForkJoinPool()) {
+            var person = getPerson(personId);
+            var assets = joinPool.submit(() -> getAssets(person));
+            var liabilities = joinPool.submit(() -> getLiabilities(person));
+
+            joinPool.submit(this::importantWork);
+
+            return calculateCredits(assets.get(), liabilities.get());
+        }
+    }
+     */
 
     private Person getPerson(final Long personId) {
         simulateDelay(200);

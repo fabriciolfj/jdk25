@@ -9,7 +9,7 @@ public class Simulation {
         System.out.println("=== Sequencial Execution ===");
         ExecutionTimer.measure(() -> service.calculteCredit(1L));
 
-        System.out.println("=== Parallel Execution ===");
+        System.out.println("=== Parallel Execution with executors ===");
         ExecutionTimer.measure(() -> {
             try {
                 return service.calculeCreditWithUnboundedThreads(1L);
