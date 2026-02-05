@@ -26,7 +26,11 @@ public class NumerosDuplicados {
 
         list.stream().collect(Collectors.groupingBy(Function.identity(), Collectors.counting()))
                 .entrySet()
-                .stream().filter(e -> e.getValue() > 1)
-                .forEach(v ->  IO.println("numero duplicado " + v.getValue()));
+                .stream().filter(v ->  v.getValue() > 1)
+                .forEach(v ->  IO.println("duplicado " + v.getValue()));
+
+        list.stream().collect(Collectors.partitioningBy(v ->  v % 2 == 0))
+                .forEach((isPar, valores) ->  IO.println(isPar + " " + valores));
+
     }
 }
