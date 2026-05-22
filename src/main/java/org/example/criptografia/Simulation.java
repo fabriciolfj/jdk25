@@ -13,11 +13,13 @@ import java.util.Arrays;
 
 public class Simulation {
 
+    private static final String ROTULO = "test"; //precisa informar no outro ms que for fazer o decrypt
+
     static void main() throws NoSuchAlgorithmException, InvalidAlgorithmParameterException, NoSuchPaddingException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
         // --- Simula segredo bruto do ECDH ---
         byte[] ecdhSharedSecret = "segredo-bruto-irregular-ecdh-xpto".getBytes(StandardCharsets.UTF_8);
         byte[] salt = new byte[32];
-        new SecureRandom().nextBytes(salt);
+        new SecureRandom().nextBytes(salt); //salt e um valor aletorio publico para evitar ataques de pre computacao
 
         KDF kdf = KDF.getInstance("HKDF-SHA256");
 
@@ -25,7 +27,7 @@ public class Simulation {
         AlgorithmParameterSpec specEnc = HKDFParameterSpec.ofExtract()
                 .addIKM(ecdhSharedSecret)
                 .addSalt(salt)
-                .thenExpand("pix:payload:encrypt".getBytes(), 32);
+                .thenExpand(ROTULO.getBytes(), 32);
 
         SecretKey encryptionKey = kdf.deriveKey("AES", specEnc);
 
@@ -44,7 +46,7 @@ public class Simulation {
         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
         cipher.init(Cipher.ENCRYPT_MODE, encryptionKey);
 
-        byte[] iv          = cipher.getIV(); // GCM gera vetor automaticamente
+        byte[] iv          = cipher.getIV(); // GCM gera vetor automaticamente e precisa ser enviado ao decrypt mode (propagar)
         byte[] encrypted   = cipher.doFinal(payload.getBytes(StandardCharsets.UTF_8));
 
         System.out.println("ENCRIPTADO (base64): " +
@@ -55,7 +57,7 @@ public class Simulation {
         SecretKey sameEncryptionKey = kdf.deriveKey("AES", HKDFParameterSpec.ofExtract()
                 .addIKM(ecdhSharedSecret)
                 .addSalt(salt)
-                .thenExpand("pix:payload:encrypt".getBytes(), 32));
+                .thenExpand(ROTULO.getBytes(), 32));
 
         Cipher decipher = Cipher.getInstance("AES/GCM/NoPadding");
         decipher.init(Cipher.DECRYPT_MODE, sameEncryptionKey, new GCMParameterSpec(128, iv));
