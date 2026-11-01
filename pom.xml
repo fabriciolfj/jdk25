@@ -9,25 +9,24 @@
     <version>1.0-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.source>24</maven.compiler.source>
-        <maven.compiler.target>24</maven.compiler.target>
-        <vertx.version>5.0.5</vertx.version>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
+        <vertx.version>5.2.2</vertx.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <reactor.version>3.6.8</reactor.version>
-        <vertx.version>5.0.5</vertx.version>
-        <spring.version>6.2.8</spring.version>
-        <spring.boot.version>3.3.5</spring.boot.version>
-        <slf4j.version>2.0.13</slf4j.version>
-        <mutiny.version>2.6.1</mutiny.version>
-        <microprofile.rest.client.version>3.0.1</microprofile.rest.client.version>
-        <smallrye.common.version>2.5.0</smallrye.common.version>
-        <jakarta.ws.rs.version>3.1.0</jakarta.ws.rs.version>
-        <jakarta.cdi.version>4.0.1</jakarta.cdi.version>
+        <spring.version>7.0.10</spring.version>
+        <spring.boot.version>4.1.2</spring.boot.version>
+        <slf4j.version>2.0.20</slf4j.version>
+        <mutiny.version>3.3.1</mutiny.version>
+        <microprofile.rest.client.version>4.0</microprofile.rest.client.version>
+        <smallrye.common.version>2.21.1</smallrye.common.version>
+        <jakarta.ws.rs.version>4.0.0</jakarta.ws.rs.version>
+        <jakarta.cdi.version>5.0.0</jakarta.cdi.version>
         <jakarta.concurrent.version>3.1.1</jakarta.concurrent.version>
-        <jakarta.annotation.version>2.1.1</jakarta.annotation.version>
+        <jakarta.annotation.version>3.0.0</jakarta.annotation.version>
         <jakarta.inject.version>2.0.1</jakarta.inject.version>
         <exec.plugin.version>3.1.0</exec.plugin.version>
-        <kotlin.version>2.3.20</kotlin.version>
+        <kotlin.version>2.4.21</kotlin.version>
     </properties>
     <dependencies>
         <dependency>
@@ -104,12 +103,6 @@
             <artifactId>microprofile-rest-client-api</artifactId>
             <version>${microprofile.rest.client.version}</version>
         </dependency>
-        <!-- SLF4J API -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>2.0.9</version>
-        </dependency>
         <dependency>
             <groupId>commons-beanutils</groupId>
             <artifactId>commons-beanutils</artifactId>
@@ -123,7 +116,7 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webflux</artifactId>
-            <version>6.0.0</version>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jetbrains.kotlin</groupId>
@@ -183,6 +176,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.16.0</version>
                 <executions>
                     <execution>
                         <id>default-compile</id>
